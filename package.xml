@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>raspi_ros_client</name>
+  <version>0.1.0</version>
+  <description>The raspi_ros_client package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+
+  <author email="rok.pahic@ijs.si">Rok Pahic</author >
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+
+  <depend>digital_interface_msgs</depend>
+
+
+  <depend>std_srvs</depend>
+   
+
+<exec_depend>rosservice</exec_depend>
+<exec_depend>rospy</exec_depend>
+<exec_depend>roslaunch</exec_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <!-- <run_depend>message_runtime</run_depend> -->
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
