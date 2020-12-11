@@ -2,7 +2,7 @@
 import rospy
 import rosservice
 from digital_interface_msgs.srv import ConfigRead, ConfigSet,ConfigSetRequest
-
+import os.path
 
 class MinimalClientAsync(object):
 
@@ -34,6 +34,7 @@ def main(args=None):
     raspi_services=[]
     for i in service_list:
         if 'config_set_new' in i:
+            i = i.replace('config_set_new','')
             raspi_services.append(i)
 
     print('Hello! I\'m Rassberry ROS configuration client. I have next Raspberries in my reach:')
@@ -48,20 +49,30 @@ def main(args=None):
     print('You have choosen: ' + str(chosen_raspi))
 
 
+
+
     chosen_template=int((raw_input('Configure from now active configuration (write 1) or empty template (write 2)? (default = 1)')) or 1)
+    
     if chosen_template==1:
         print('Active configuration it is.')
-        read_proxy= rospy.ServiceProxy('config_read_current', ConfigRead)
+        demand_name=raspi_services[chosen_raspi-1]+'config_read_current'
+        #read_proxy= rospy.ServiceProxy('config_read_current', ConfigRead)
 
     elif chosen_template==2:
         print('Empty template it is.')
-        read_proxy= rospy.ServiceProxy('config_read_template', ConfigRead)
+        demand_name=raspi_services[chosen_raspi-1]+'config_read_template'
+        #read_proxy= rospy.ServiceProxy('config_read_template', ConfigRead)
+
+    read_proxy= rospy.ServiceProxy(demand_name, ConfigRead)
 
     template_msg = read_proxy().config
 
     print(template_msg)
 
     pin_number=int(input('Which pin you want to configure? (write number pin or write 0 if you are finish):'))
+
+
+
 
     while (pin_number!=0):
         print('Current pin configuration:')
@@ -81,14 +92,18 @@ def main(args=None):
                 print('wrong config, try again with this!')
                 print(template_msg.pin_configs[pin_number-1].available_config)
 
-        template_msg.pin_configs[pin_number-1].service_name=str(raw_input('Write desired service name:'))
+        if chosen_pin_config=='empty':
+
+            template_msg.pin_configs[pin_number-1].service_name=''
+        else:
+            template_msg.pin_configs[pin_number-1].service_name=str(raw_input('Write desired service name:'))
 
         pin_number=int(input('Which pin you want to configure next? (write number pin or write 0 if you are finish):'))
 
 
     
     print('Sending config')
-    write_proxy= rospy.ServiceProxy('config_set_new', ConfigSet)
+    write_proxy= rospy.ServiceProxy(raspi_services[chosen_raspi-1]+'config_set_new', ConfigSet)
 
     response = write_proxy(template_msg)
       
