@@ -22,7 +22,6 @@ class MinimalClientAsync(object):
 
 def main(args=None):
 
-
     #rospy.create_client()
     #rospy.create_client()
   
