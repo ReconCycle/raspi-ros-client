@@ -91,6 +91,12 @@ def main(args=None):
                 print('wrong config, try again with this!')
                 print(template_msg.pin_configs[pin_number-1].available_config)
 
+        if chosen_pin_config=='PWM' :
+            freq=int(input('Your PWM frequency:'))
+            duty_cycle=int(input('Initial PWM duty cycle (from 0.0 to 1.0):'))
+            template_msg.pin_configs[pin_number-1].config_parameters=[str(freq),str(duty_cycle)]
+
+
         if chosen_pin_config=='empty':
 
             template_msg.pin_configs[pin_number-1].service_name=''
