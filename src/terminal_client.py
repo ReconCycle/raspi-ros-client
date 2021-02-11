@@ -4,20 +4,6 @@ import rosservice
 from digital_interface_msgs.srv import ConfigRead, ConfigSet,ConfigSetRequest
 import os.path
 
-class MinimalClientAsync(object):
-
-    def __init__(self):
-        super().__init__('minimal_client_async')
-        self.cli = self.create_client(AddTwoInts, 'add_two_ints')
-        while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not available, waiting again...')
-        self.req = AddTwoInts.Request()
-
-    def send_request(self):
-        self.req.a = int(sys.argv[1])
-        self.req.b = int(sys.argv[2])
-        self.future = self.cli.call_async(self.req)
-
 
 
 def main(args=None):
@@ -36,7 +22,12 @@ def main(args=None):
             i = i.replace('config_set_new','')
             raspi_services.append(i)
 
-    print('Hello! I\'m Rassberry ROS configuration client. I have next Raspberries in my reach:')
+    if len(raspi_services)==0:
+        print('Hello! I\'m Rassberry ROS configuration client. No Raspberries services in my reach!')
+        return
+
+    else:    
+        print('Hello! I\'m Rassberry ROS configuration client. I have next Raspberries in my reach:')
 
     j=0
     for i in raspi_services:
@@ -91,16 +82,28 @@ def main(args=None):
                 print('wrong config, try again with this!')
                 print(template_msg.pin_configs[pin_number-1].available_config)
 
-        if chosen_pin_config=='PWM' :
-            freq=int(input('Your PWM frequency:'))
-            duty_cycle=int(input('Initial PWM duty cycle (from 0.0 to 1.0):'))
-            template_msg.pin_configs[pin_number-1].config_parameters=[str(freq),str(duty_cycle)]
+
 
 
         if chosen_pin_config=='empty':
 
             template_msg.pin_configs[pin_number-1].service_name=''
         else:
+
+
+
+            print('Setting parameters (write parameter name END to finish)')
+            parameter_name='General'
+            template_msg.pin_configs[pin_number-1].config_parameters=[]
+            parameter_name=str(raw_input('Parameter name:'))
+            while parameter_name!='END':        
+                parameter_value=str(raw_input('Parameter value:'))
+                template_msg.pin_configs[pin_number-1].config_parameters.append(parameter_name)
+                template_msg.pin_configs[pin_number-1].config_parameters.append(parameter_value)
+                parameter_name=str(raw_input('Parameter name:'))
+
+
+
             template_msg.pin_configs[pin_number-1].service_name=str(raw_input('Write desired service name:'))
 
         pin_number=int(input('Which pin you want to configure next? (write number pin or write 0 if you are finish):'))
